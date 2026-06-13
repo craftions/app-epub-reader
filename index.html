@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB Reader</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Crafted EPUB Reader</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div id="app">
         <header id="toolbar">
-            <div class="toolbar-group">
-                <button id="prev-btn" disabled>◀</button>
-                <button id="next-btn" disabled>▶</button>
-                <span id="chapter-info">0 / 0</span>
-            </div>
-
-            <div class="toolbar-group grow">
-                <label for="chapter-select" data-i18n="jumpTo">Ir a</label>
-                <select id="chapter-select" disabled></select>
+            <div class="toolbar-left">
+                <div class="hamburger-wrap">
+                    <button id="hamburger-btn" type="button" title="Toggle contents"
+                            aria-label="Toggle contents" aria-controls="toc-list" aria-expanded="true">
+                        <span class="hamburger-icon" aria-hidden="true"></span>
+                    </button>
+                </div>
             </div>
 
             <div id="settings" class="toolbar-group">
-                <label for="font-size" class="icon-label" title="Tamaño">🔎</label>
                 <select id="font-size" title="Font size">
                     <option value="16px">A-</option>
                     <option value="18px" selected>A</option>
@@ -30,7 +27,6 @@
                     <option value="28px">A+++</option>
                 </select>
 
-                <label for="font-family" class="icon-label" title="Tipografía">🅰</label>
                 <select id="font-family" title="Font family">
                     <option value="Georgia, serif">Serif</option>
                     <option value="'Trebuchet MS', sans-serif" selected>Sans</option>
@@ -42,30 +38,43 @@
 
                 <select id="lang-select" title="Language">
                     <option value="en" selected>🇺🇸 English</option>
-                    <option value="es">🇪🇸 Espanol</option>
+                    <option value="es">🇪🇸 Español</option>
                 </select>
             </div>
         </header>
 
         <div id="content-wrap">
             <aside id="toc-panel">
-                <h2 data-i18n="toc">Indice</h2>
+                <div class="toc-header">
+                    <h2 data-i18n="toc">Contents</h2>
+                </div>
                 <nav id="toc-list"></nav>
             </aside>
 
             <main id="content">
                 <div id="welcome-screen">
-                    <h1>EPUB Reader</h1>
-                    <p data-i18n="uploadPrompt">Sube un archivo EPUB para comenzar a leer</p>
+                    <img class="welcome-logo"
+                         src="https://www.gravatar.com/avatar/d8a6d35ad4b971a4e96acd7da66420c5?s=80&r=g&d=mm"
+                         alt="craftions.io">
+                    <h1>Crafted with <span class="heart" aria-hidden="true">♥</span></h1>
+                    <p data-i18n="uploadPrompt">Upload an EPUB file to start reading</p>
                     <input type="file" id="file-input" accept=".epub,application/epub+zip">
-                    <label for="file-input" id="upload-label" data-i18n="uploadCta">Elegir archivo EPUB</label>
+                    <label for="file-input" id="upload-label" data-i18n="uploadCta">Choose EPUB file</label>
                 </div>
                 <article id="reader-content"></article>
             </main>
         </div>
+
+        <footer id="footer">
+            <div class="footer-nav">
+                <button id="prev-btn" disabled>◀</button>
+                <span id="chapter-info">0/0</span>
+                <button id="next-btn" disabled>▶</button>
+            </div>
+        </footer>
     </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="js/jszip.min.js"></script>
     <script src="js/epub-reader.js"></script>
 </body>
 </html>

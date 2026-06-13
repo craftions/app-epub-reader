@@ -41,7 +41,7 @@ class EPUBReader {
         document.getElementById("file-input").addEventListener("change", (e) => this.handleFileUpload(e));
         document.getElementById("prev-btn").addEventListener("click", () => this.goTo(this.currentIndex - 1));
         document.getElementById("next-btn").addEventListener("click", () => this.goTo(this.currentIndex + 1));
-        document.getElementById("chapter-select").addEventListener("change", (e) => this.goTo(Number(e.target.value)));
+        document.getElementById("hamburger-btn").addEventListener("click", () => this.toggleTocPanel());
         document.getElementById("reader-content").addEventListener("click", (e) => this.handleContentLinkClick(e));
         document.addEventListener("keydown", (e) => this.handleKeyboardNavigation(e));
 
@@ -103,7 +103,7 @@ class EPUBReader {
             }));
 
             document.getElementById("welcome-screen").style.display = "none";
-            document.getElementById("chapter-select").disabled = false;
+            document.getElementById("toc-panel").classList.add("is-visible");
             this.currentIndex = 0;
             this.buildSectionSelectors();
             this.rebuildHrefIndex();
@@ -329,17 +329,12 @@ class EPUBReader {
     }
 
     buildSectionSelectors() {
-        const select = document.getElementById("chapter-select");
         const toc = document.getElementById("toc-list");
-        select.innerHTML = "";
+        if (!toc || !this.readingUnits.length) return;
         toc.innerHTML = "";
 
         this.readingUnits.forEach((unit, index) => {
             const label = unit.label || `${this.t("chapter")} ${index + 1}`;
-            const option = document.createElement("option");
-            option.value = String(index);
-            option.textContent = label;
-            select.appendChild(option);
 
             const link = document.createElement("button");
             link.type = "button";
@@ -348,6 +343,13 @@ class EPUBReader {
             link.addEventListener("click", () => this.goTo(index));
             toc.appendChild(link);
         });
+    }
+
+    toggleTocPanel() {
+        const panel = document.getElementById("toc-panel");
+        const btn = document.getElementById("hamburger-btn");
+        const collapsed = panel.classList.toggle("is-collapsed");
+        btn.setAttribute("aria-expanded", String(!collapsed));
     }
 
     async goTo(index) {
@@ -367,6 +369,7 @@ class EPUBReader {
         const raw = await file.async("string");
         const doc = new DOMParser().parseFromString(raw, "text/html");
         const article = document.getElementById("reader-content");
+        if (!article) throw new Error("Reader content container missing");
         article.innerHTML = doc.body ? doc.body.innerHTML : raw;
         await this.hydrateEmbeddedResources(chapterPath, article);
 
@@ -379,7 +382,6 @@ class EPUBReader {
             document.getElementById("content").scrollTop = 0;
         }
 
-        document.getElementById("chapter-select").value = String(this.currentIndex);
         document.querySelectorAll(".toc-item").forEach((el, idx) => el.classList.toggle("active", idx === this.currentIndex));
     }
 
@@ -411,7 +413,7 @@ class EPUBReader {
         nextBtn.textContent = `${this.t("next")} ▶`;
         prevBtn.disabled = this.currentIndex === 0;
         nextBtn.disabled = this.currentIndex >= this.readingUnits.length - 1;
-        document.getElementById("chapter-info").textContent = `${this.currentIndex + 1} / ${this.readingUnits.length}`;
+        document.getElementById("chapter-info").textContent = `${this.currentIndex + 1}/${this.readingUnits.length}`;
     }
 }
 
